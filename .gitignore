@@ -1,6 +1,5 @@
-
+bin/
 logs/
 
 *.class
-
 *.jar
