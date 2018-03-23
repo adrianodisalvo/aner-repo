@@ -17,5 +17,9 @@ public abstract class Dao<E> implements IDao<E> {
 		entityManager = entityManagerFactory.createEntityManager();
 	}
 
-	public void persist(E entity) { entityManager.persist(entity); }
+	public void persist(E entity) {
+		entityManager.getTransaction().begin();
+		entityManager.persist(entity);
+		entityManager.getTransaction().commit();
+	}
 }

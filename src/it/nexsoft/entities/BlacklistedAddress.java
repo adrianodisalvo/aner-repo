@@ -1,8 +1,5 @@
 package it.nexsoft.entities;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -12,11 +9,10 @@ import javax.persistence.Table;
 public class BlacklistedAddress {
 	
 	@Id
-	@Column(unique=true)
 	private String address;
-	private Date date;
+	private String date;
 	
-	public BlacklistedAddress(String address, Date date) {
+	public BlacklistedAddress(String address, String date) {
 		super();
 		this.address=address;
 		this.date=date;
@@ -29,8 +25,8 @@ public class BlacklistedAddress {
 	public String getAddress() { return address; }
 	public void setAddress(String address) { this.address=address; }
 	
-	public Date getDate() { return date; }
-	public void setDate(Date date) { this.date=date; }
+	public String getDate() { return date; }
+	public void setDate(String date) { this.date=date; }
 	
 	@Override
 	public String toString() {

@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,9 +52,11 @@ public class MailWorkerThread extends Thread {
 				
 				if (recipientEmailAddress != null && !recipientEmailAddress.isEmpty()) {
 					logger.debug("Found the candidate email address: " + recipientEmailAddress);
-					BlacklistedAddress blAddress = new BlacklistedAddress(recipientEmailAddress, new Date(System.currentTimeMillis()));
 					if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress) &&
 							MailSender.getInstance().sendMail(recipientEmailAddress, subjectAppend)) {
+						Calendar today = new GregorianCalendar();
+						SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS.SSS");
+						BlacklistedAddress blAddress = new BlacklistedAddress(recipientEmailAddress, sdf.format(today.getTime()));
 						BlacklistedAddressDao.getInstance().persist(blAddress);
 						receivedMessage.setFlag(Flag.SEEN, true);
 						logger.info(recipientEmailAddress + " : message succesfully sent");
@@ -61,13 +65,6 @@ public class MailWorkerThread extends Thread {
 					receivedMessage.setFlag(Flag.SEEN, true);
 					logger.warn("Recipient email address is null or empty. The automatic email will not be sent.");
 				}
-				
-			} catch (MessagingException me) {
-				me.printStackTrace();
-				logger.error(me.getMessage());
-			} catch (IOException ioe) {
-				ioe.printStackTrace();
-				logger.error(ioe.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error(e.getMessage());

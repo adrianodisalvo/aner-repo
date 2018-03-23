@@ -1,5 +1,7 @@
 package it.nexsoft.dao;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -17,7 +19,7 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 		return instance;
 	}
 
-	public boolean checkAddress(String recipientAddress) {
+	public boolean checkAddress(String recipientAddress) throws ParseException {
 		
 		boolean bRet = true;
 		
@@ -26,7 +28,8 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 		if (blacklistedAddress != null) {
 			Calendar oneMonthAgo = GregorianCalendar.getInstance();
 			oneMonthAgo.add(Calendar.MONTH, -1);
-			if (blacklistedAddress.getDate().before(oneMonthAgo.getTime()))
+			SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS.SSS");
+			if (sdf.parse(blacklistedAddress.getDate()).before(oneMonthAgo.getTime()))
 				bRet = false;
 		}
 		return bRet;
