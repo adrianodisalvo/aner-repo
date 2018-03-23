@@ -10,6 +10,7 @@ tmp/
 *.bak
 *.swp
 *~.nib
+*.db3
 local.properties
 .settings/
 .loadpath

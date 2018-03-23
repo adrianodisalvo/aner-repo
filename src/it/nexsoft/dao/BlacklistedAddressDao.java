@@ -19,7 +19,7 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 
 	public boolean checkAddress(String recipientAddress) {
 		
-		boolean bRet = false;
+		boolean bRet = true;
 		
 		BlacklistedAddress blacklistedAddress = entityManager.find(BlacklistedAddress.class, recipientAddress);
 		
@@ -27,7 +27,7 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 			Calendar oneMonthAgo = GregorianCalendar.getInstance();
 			oneMonthAgo.add(Calendar.MONTH, -1);
 			if (blacklistedAddress.getDate().before(oneMonthAgo.getTime()))
-				bRet = true;
+				bRet = false;
 		}
 		return bRet;
 	}
