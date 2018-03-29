@@ -52,14 +52,24 @@ public class MailWorkerThread extends Thread {
 				
 				if (recipientEmailAddress != null && !recipientEmailAddress.isEmpty()) {
 					logger.debug("Found the candidate email address: " + recipientEmailAddress);
-					if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress) &&
-							MailSender.getInstance().sendMail(recipientEmailAddress, subjectAppend)) {
-						Calendar today = new GregorianCalendar();
-						SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS.SSS");
-						BlacklistedAddress blAddress = new BlacklistedAddress(recipientEmailAddress, sdf.format(today.getTime()));
-						BlacklistedAddressDao.getInstance().persist(blAddress);
-						receivedMessage.setFlag(Flag.SEEN, true);
-						logger.info(recipientEmailAddress + " : message succesfully sent");
+					synchronized(MailWorkerThread.class) {
+						logger.debug("---> Entering critical section");
+						if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress)) {
+							if (MailSender.getInstance().sendMail(recipientEmailAddress, subjectAppend)) {
+								receivedMessage.setFlag(Flag.SEEN, true);
+								Calendar today = new GregorianCalendar();
+								SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+								BlacklistedAddress blAddress = new BlacklistedAddress(recipientEmailAddress, sdf.format(today.getTime()));
+								BlacklistedAddressDao.getInstance().persist(blAddress);
+								logger.info(recipientEmailAddress + " : message succesfully sent");
+							} else {
+								logger.warn(recipientEmailAddress + " : error sending email");
+							}
+						} else {
+							receivedMessage.setFlag(Flag.SEEN, true);
+							logger.warn(recipientEmailAddress + " : the email to this address was already sent in the last month, skipping it");
+						}
+						logger.debug("---> Exiting critical section");
 					}
 				} else {
 					receivedMessage.setFlag(Flag.SEEN, true);
@@ -154,7 +164,7 @@ public class MailWorkerThread extends Thread {
 		logger.info("Discovering email address from attachments");
 		List<File> attachments = getAttachedFiles();
 		
-		logger.debug("Found " + attachments.size() + " attachments from an e-mail coming from Indeed");
+		logger.debug("Found " + attachments.size() + " attachments");
 		
 		for (int i = 0; i < attachments.size(); i++) {
 			if (Stream.of("pdf", "doc", "docx").anyMatch(FilenameUtils.getExtension(attachments.get(i).getName())::equalsIgnoreCase)) {

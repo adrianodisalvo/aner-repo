@@ -28,7 +28,7 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 		if (blacklistedAddress != null) {
 			Calendar oneMonthAgo = GregorianCalendar.getInstance();
 			oneMonthAgo.add(Calendar.MONTH, -1);
-			SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD HH:MM:SS.SSS");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 			if (sdf.parse(blacklistedAddress.getDate()).before(oneMonthAgo.getTime()))
 				bRet = false;
 		}

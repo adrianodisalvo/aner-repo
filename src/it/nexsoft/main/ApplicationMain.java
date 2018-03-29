@@ -31,6 +31,8 @@ public class ApplicationMain {
 		
 		readParametersFromConfig();
 		
+		logger.debug("The email will be checked every " + Globals.timeoutInterval/60000 + " minutes");
+		
 		TimeoutRoutine tr = new TimeoutRoutine();
 		
 		while(tr.isRunning()) {}
@@ -40,18 +42,19 @@ public class ApplicationMain {
 
 	private static void readParametersFromConfig() {
 		try {
+			logger.info("Reading configuration parameters from " + Globals.configFilePath);
 			FileInputStream propertiesFile = new FileInputStream(Globals.configFilePath);
 			Properties prop = new Properties();
 			prop.load(propertiesFile);
 			Globals.username = prop.getProperty("username");
 			Globals.password = prop.getProperty("password");
-			Globals.timeoutInterval = Integer.parseInt(prop.getProperty("timeoutInterval", "900000"));
+			Globals.timeoutInterval = 60 * 1000 * Integer.parseInt(prop.getProperty("timeoutInterval", "15"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error("Error in reading properties: " + e.getMessage() + " - loading default configuration parameters values");
 			Globals.username = "recruiting@nexsoft.it";
 			Globals.password = "adisalvo";
-			Globals.timeoutInterval = 900000;
+			Globals.timeoutInterval = 15 * 60 * 1000;
 		}
 	}
 }

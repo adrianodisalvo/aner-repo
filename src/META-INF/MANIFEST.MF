@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Rsrc-Class-Path: ./ javax.mail.jar commons-lang3-3.7.jar commons-io-2.
+ 6.jar commons-logging-1.2.jar pdfbox-2.0.8.jar poi-3.17.jar poi-scrat
+ chpad-3.17.jar fontbox-2.0.8.jar log4j-api-2.10.0.jar log4j-core-2.10
+ .0.jar sqlite-jdbc-3.21.0.jar eclipselink.jar javax.persistence_2.1.0
+ .v201304241213.jar org.eclipse.persistence.jpa.modelgen_2.5.2.v201403
+ 19-9ad6abd.jar org.eclipse.persistence.jpars_2.5.2.v20140319-9ad6abd.
+ jar com.sun.tools.xjc_2.2.0.jar com.sun.xml.bind_2.2.0.v201004141950.
+ jar javax.activation_1.1.0.v201108011116.jar javax.mail_1.4.0.v201005
+ 080615.jar javax.xml.bind_2.2.0.v201105210648.jar javax.xml.stream_1.
+ 0.1.v201004272200.jar
+Class-Path: .
+Rsrc-Main-Class: it.nexsoft.main.ApplicationMain
+Main-Class: org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader
+Meta-Persistence: ./META-INF/persistence.xml
