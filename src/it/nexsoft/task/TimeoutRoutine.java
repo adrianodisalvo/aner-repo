@@ -1,5 +1,6 @@
 package it.nexsoft.task;
 
+import java.util.GregorianCalendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,13 +44,20 @@ public class TimeoutRoutine {
 		
 		logger.trace("Start doTheJob()");
 		
-		Message[] messages = MailReceiver.getInstance().checkMail();
+		Message[] messages = null;;
 		
-		logger.debug("Found " + messages.length + " new e-mail messages");
-		
-		for (Message message : messages)
-		{
-			new MailWorkerThread(message).start();
+		if( isWorkingTime() ) {
+			messages = MailReceiver.getInstance().checkMail();
+			
+			logger.debug("Found " + messages.length + " new e-mail messages");
+			
+			for (Message message : messages)
+			{
+				new MailWorkerThread(message).start();
+			}
+			
+		} else {
+			logger.warn("Now it's not working time, I'll go to sleep again...");
 		}
 		
 		logger.trace("Stop doTheJob()");
@@ -59,4 +67,21 @@ public class TimeoutRoutine {
 		return isRunning;
 	}
 
+	private boolean isWorkingTime() {
+		
+		boolean bRet = false;
+		
+		GregorianCalendar now = new GregorianCalendar();
+		int dayOfWeek = now.get(GregorianCalendar.DAY_OF_WEEK);
+		int hourOfDay = now.get(GregorianCalendar.HOUR_OF_DAY);
+		
+		if( dayOfWeek >= GregorianCalendar.MONDAY &&
+			dayOfWeek <= GregorianCalendar.FRIDAY &&
+			hourOfDay >= 9 &&
+			hourOfDay < 18) {
+			bRet = true;
+		}
+		
+		return bRet;
+	}
 }

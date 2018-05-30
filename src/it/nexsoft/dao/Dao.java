@@ -9,6 +9,7 @@ public abstract class Dao<E> implements IDao<E> {
 	//protected Class entityClass;
 
 	protected EntityManager entityManager;
+	//protected EntityManagerFactory entityManagerFactory;
 
 	public Dao() {
 		//ParameterizedType genericSuperclass = (ParameterizedType)getClass().getGenericSuperclass();
@@ -17,9 +18,9 @@ public abstract class Dao<E> implements IDao<E> {
 		entityManager = entityManagerFactory.createEntityManager();
 	}
 
-	public void persist(E entity) {
+	public void insertOrUpdate(E entity) {
 		entityManager.getTransaction().begin();
-		entityManager.persist(entity);
+		entityManager.merge(entity);
 		entityManager.getTransaction().commit();
 	}
 }

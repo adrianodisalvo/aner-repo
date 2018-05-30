@@ -5,6 +5,9 @@ import java.io.File;
 public class Globals {
 	
 	public static final String configFilePath = "properties" + File.separator + "aner.properties";
+	public static final String permanentlyBlacklistedAddressFilePath = "properties" + File.separator + "PermanentlyBlacklistedAddressList";
+	
+	public static final String dateFormat = "yyyy-MM-dd HH:mm:ss.SSS";
 	
 	public static final String imapHost = "imaps.aruba.it";
 	public static final String imapPort = "993";

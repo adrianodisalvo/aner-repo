@@ -118,11 +118,10 @@ public class MailSender {
 		logger.info(recipientEmailAddress + " : setting message headers");
 		
 		toBeSentMessage.setFrom(new InternetAddress("selezione@nexsoft.it"));
-		//toBeSentMessage.setFrom(new InternetAddress("a.disalvo@nexsoft.it"));
 		
 		toBeSentMessage.addRecipient(RecipientType.TO, new InternetAddress(recipientEmailAddress));
 		toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("m.masucci@nexsoft.it"));
-		//toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("a.disalvo@nexsoft.it"));
+		toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("a.disalvo@nexsoft.it"));
 		//toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("f.saporito@nexsoft.it"));
 		
 		toBeSentMessage.setSubject("Riferimenti aziendali Nexsoft - Candidatura " + subjectAppend);

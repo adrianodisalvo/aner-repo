@@ -1,7 +1,9 @@
 package it.nexsoft.task;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -26,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import it.nexsoft.dao.BlacklistedAddressDao;
 import it.nexsoft.entities.BlacklistedAddress;
 import it.nexsoft.mail.MailSender;
+import it.nexsoft.main.Globals;
 import it.nexsoft.parser.CustomParserFactory;
 import it.nexsoft.parser.Parser;
 
@@ -54,13 +57,15 @@ public class MailWorkerThread extends Thread {
 					logger.debug("Found the candidate email address: " + recipientEmailAddress);
 					synchronized(MailWorkerThread.class) {
 						logger.debug("---> Entering critical section");
-						if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress)) {
+						if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress) &&
+								!checkIfPermanentlyBlacklisted(recipientEmailAddress) ) {
+							logger.info("Current address is NOT blacklisted: " + recipientEmailAddress);
 							if (MailSender.getInstance().sendMail(recipientEmailAddress, subjectAppend)) {
 								receivedMessage.setFlag(Flag.SEEN, true);
 								Calendar today = new GregorianCalendar();
-								SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+								SimpleDateFormat sdf = new SimpleDateFormat(Globals.dateFormat);
 								BlacklistedAddress blAddress = new BlacklistedAddress(recipientEmailAddress, sdf.format(today.getTime()));
-								BlacklistedAddressDao.getInstance().persist(blAddress);
+								BlacklistedAddressDao.getInstance().insertOrUpdate(blAddress);
 								logger.info(recipientEmailAddress + " : message succesfully sent");
 							} else {
 								logger.warn(recipientEmailAddress + " : error sending email");
@@ -110,15 +115,13 @@ public class MailWorkerThread extends Thread {
 			logger.info("Received message from " + subjectAppend);
 			sReturn = discoverFromAttach();
 		}
-		else if (senderAddress.contains("@biancolavoro.it") &&
+		else if (senderAddress.contains("@euspert.com") &&
 				receivedMessage.getSubject().contains("Candidatura per") &&
 				receivedMessage.getSubject().contains("(Rif.")) {
 			subjectAppend = "Euspert";
 			logger.info("Received message from " + subjectAppend);
 			sReturn = discoverFromBody();
 		}
-		//else if (senderAddress.contains("adro.disalvo@fastwebnet.it")) // TODO : test purpose, to be deleted
-		//	sReturn = discoverFromBody();
 		else
 			logger.debug("The current email is not coming from an online application");
 		
@@ -229,5 +232,24 @@ public class MailWorkerThread extends Thread {
 			logger.debug("Deleting " + f.getName());
 			f.delete();
 		}
+	}
+	
+	private boolean checkIfPermanentlyBlacklisted(String recipientAddress) throws IOException {
+		
+		boolean bRet = false;
+		
+		BufferedReader br = new BufferedReader(new FileReader(Globals.permanentlyBlacklistedAddressFilePath));
+		
+		String line;
+		while((line = br.readLine()) != null) {
+			if(line.contains(recipientAddress)) {
+				bRet = true;
+				logger.warn("Current address is permanently blacklisted: " + recipientAddress);
+				break;
+			}
+		}
+		br.close();
+		
+		return bRet;
 	}
 }
