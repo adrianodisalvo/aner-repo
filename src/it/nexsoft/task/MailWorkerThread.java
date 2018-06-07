@@ -57,8 +57,8 @@ public class MailWorkerThread extends Thread {
 					logger.debug("Found the candidate email address: " + recipientEmailAddress);
 					synchronized(MailWorkerThread.class) {
 						logger.debug("---> Entering critical section");
-						if (BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress) &&
-								!checkIfPermanentlyBlacklisted(recipientEmailAddress) ) {
+						if (!checkIfPermanentlyBlacklisted(recipientEmailAddress) && 
+								BlacklistedAddressDao.getInstance().checkAddress(recipientEmailAddress) ) {
 							logger.info("Current address is NOT blacklisted: " + recipientEmailAddress);
 							if (MailSender.getInstance().sendMail(recipientEmailAddress, subjectAppend)) {
 								receivedMessage.setFlag(Flag.SEEN, true);
@@ -72,7 +72,7 @@ public class MailWorkerThread extends Thread {
 							}
 						} else {
 							receivedMessage.setFlag(Flag.SEEN, true);
-							logger.warn(recipientEmailAddress + " : the email to this address was already sent in the last month, skipping it");
+							logger.warn(recipientEmailAddress + " : this e-mail address is blacklisted, skipping it.");
 						}
 						logger.debug("---> Exiting critical section");
 					}

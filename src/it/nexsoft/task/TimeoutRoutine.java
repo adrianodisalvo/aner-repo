@@ -47,14 +47,15 @@ public class TimeoutRoutine {
 		Message[] messages = null;;
 		
 		if( isWorkingTime() ) {
+			
+			logger.info("Checking e-mail");
+			
 			messages = MailReceiver.getInstance().checkMail();
 			
 			logger.debug("Found " + messages.length + " new e-mail messages");
 			
 			for (Message message : messages)
-			{
 				new MailWorkerThread(message).start();
-			}
 			
 		} else {
 			logger.warn("Now it's not working time, I'll go to sleep again...");

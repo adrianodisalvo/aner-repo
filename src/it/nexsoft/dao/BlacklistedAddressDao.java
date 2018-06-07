@@ -46,7 +46,7 @@ public class BlacklistedAddressDao extends Dao<BlacklistedAddress> implements IB
 			logger.debug("... and today is " + GregorianCalendar.getInstance().getTime().toString() + "...");
 			logger.debug("So if one month ago was " + oneMonthAgo.getTime().toString() + "... Let me do my maths...");
 			
-			if (sdf.parse(blacklistedAddress.getDate()).before(oneMonthAgo.getTime())) {
+			if (sdf.parse(blacklistedAddress.getDate()).after(oneMonthAgo.getTime())) {
 				logger.debug("Well ok, " + recipientAddress + " is blacklisted by date! See you in a month (or less)!");
 				bRet = false;
 			} else {
