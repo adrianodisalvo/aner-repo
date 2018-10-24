@@ -40,8 +40,7 @@ public class MailSender {
 	private static final Logger logger = LogManager.getLogger("ApplicationMain");
 	
 	private static MailSender instance;
-
-	// TODO : delete this parameter (test purpose only) ... OR NOT?!
+	
 	private String recipientEmailAddress;
 	private String subjectAppend;
 	
@@ -121,7 +120,7 @@ public class MailSender {
 		
 		toBeSentMessage.addRecipient(RecipientType.TO, new InternetAddress(recipientEmailAddress));
 		toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("m.masucci@nexsoft.it"));
-		toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("a.disalvo@nexsoft.it"));
+		//toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("a.disalvo@nexsoft.it"));
 		//toBeSentMessage.addRecipient(RecipientType.CC, new InternetAddress("f.saporito@nexsoft.it"));
 		
 		toBeSentMessage.setSubject("Riferimenti aziendali Nexsoft - Candidatura " + subjectAppend);

@@ -51,9 +51,12 @@ public class MailReceiver {
 			props.put("mail.store.protocol", "imaps");
 			props.put("mail.imap.port", Globals.imapPort);
 			props.put("mail.imap.ssl.enable", "true");
+			props.put("mail.imap.connectiontimeout", 90000);
+			props.put("mail.imap.timeout", 90000);
 			
 			logger.info("Creating session");
 			Session session = Session.getInstance(props);
+			//session.setDebug(true);
 			
 			logger.info("Connecting to the server");
 			Store store = session.getStore();
@@ -63,7 +66,6 @@ public class MailReceiver {
 			Folder folder = store.getFolder("INBOX");
 			folder.open(Folder.READ_WRITE);
 			
-			//logger.info("Searching the email folder for recent messages (received in the last " + Globals.timeoutInterval/60000 + " minutes)" );
 			logger.info("Searching the email folder for unread messages");
 			SearchTerm searchTerm = new SearchTerm() {
 				private static final long serialVersionUID = -6240633139232405545L;
@@ -71,9 +73,7 @@ public class MailReceiver {
 				public boolean match(Message arg0) {
 					boolean bRet = false;
 					try {
-						if (/*System.currentTimeMillis() - arg0.getReceivedDate().getTime() <= Globals.timeoutInterval*/
-								!arg0.getFlags().contains(Flag.SEEN) &&
-								arg0.getReceivedDate().after(ApplicationMain.applicationStartDate.getTime()) )
+						if (!arg0.getFlags().contains(Flag.SEEN) &&	arg0.getReceivedDate().after(ApplicationMain.applicationStartDate.getTime()) )
 							bRet = true;
 					} catch (MessagingException e) {
 						e.printStackTrace();

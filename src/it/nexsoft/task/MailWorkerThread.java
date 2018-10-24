@@ -108,9 +108,7 @@ public class MailWorkerThread extends Thread {
 			sReturn = discoverFromBody();
 		}
 		else if (senderAddress.contains("@indeedemail.com") &&
-				receivedMessage.getSubject().contains("Candidatura per") &&
-				receivedMessage.getSubject().contains("inviata da") &&
-				receivedMessage.getSubject().contains("attraverso Indeed")) {
+				receivedMessage.getSubject().contains("candidatura per")) {
 			subjectAppend = "Indeed";
 			logger.info("Received message from " + subjectAppend);
 			sReturn = discoverFromAttach();

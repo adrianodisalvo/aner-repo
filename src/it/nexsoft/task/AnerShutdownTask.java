@@ -20,5 +20,4 @@ public class AnerShutdownTask extends Thread {
 		sc.nextLine();
 		sc.close();
 	}
-
 }
